@@ -22,24 +22,31 @@ const Cart = (): JSX.Element => {
   const cartFormatted = cart.map((product) => ({
     ...product,
     priceFormatted: formatPrice(product.price),
-    priceTotal: formatPrice(product.amount * product.price),
+    subtotal: formatPrice(product.price * product.amount),
   }));
-
   const total = formatPrice(
-    cart.reduce((sumTotal, product) => {
-      sumTotal += product.price * product.amount;
+    cartFormatted.reduce((sumTotal, product) => {
+      sumTotal += product.amount * product.price;
+
       return sumTotal;
     }, 0)
   );
 
   function handleProductIncrement(product: Product) {
-    updateProductAmount({ productId: product.id, amount: product.amount + 1 });
+    const IncrementArguments = {
+      productId: product.id,
+      amount: product.amount + 1,
+    };
+    updateProductAmount(IncrementArguments);
   }
 
   function handleProductDecrement(product: Product) {
-    updateProductAmount({ productId: product.id, amount: product.amount - 1 });
+    const IncrementArguments = {
+      productId: product.id,
+      amount: product.amount - 1,
+    };
+    updateProductAmount(IncrementArguments);
   }
-
   function handleRemoveProduct(productId: number) {
     removeProduct(productId);
   }
@@ -58,7 +65,7 @@ const Cart = (): JSX.Element => {
         </thead>
         <tbody>
           {cartFormatted.map((product) => (
-            <tr key={product.id} data-testid="product">
+            <tr data-testid="product" key={product.id}>
               <td>
                 <img src={product.image} alt={product.title} />
               </td>
@@ -92,7 +99,7 @@ const Cart = (): JSX.Element => {
                 </div>
               </td>
               <td>
-                <strong>{product.priceTotal}</strong>
+                <strong>R$ 359,80</strong>
               </td>
               <td>
                 <button
@@ -110,6 +117,7 @@ const Cart = (): JSX.Element => {
 
       <footer>
         <button type="button">Finalizar pedido</button>
+
         <Total>
           <span>TOTAL</span>
           <strong>{total}</strong>
